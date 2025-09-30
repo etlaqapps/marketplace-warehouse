@@ -55,7 +55,7 @@
 | UC8.1 | Logout | As an authenticated user, I want to log out securely so that my session ends. | Given any authenticated screen<br>When logout clicked from profile icon<br>Then confirm modal shown, on yes redirects to landing page.<br>Edge: None.<br>Error: Session error → auto-logout with message. |
 | UC8.2 | Error Pages | As a user, I want friendly error pages (404, 500, 403) so that issues are handled gracefully. | Given invalid access/load<br>When error occurs<br>Then shows appropriate page (e.g., 404: "Page not found" with home link).<br>Edge: None.<br>Error: None (fallback UI).
 
-### Wireframes.
+### Wireframes of the base system
 
 <img width="2560" height="2752" alt="screen" src="https://github.com/user-attachments/assets/d46b79fe-e41f-4e26-b487-2143f208e8fc" />
 
@@ -71,3 +71,30 @@
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/7b5c27ba-20a3-4399-9560-b2649af69f60" />
 <img width="2560" height="2084" alt="screen" src="https://github.com/user-attachments/assets/38a86e93-498d-4366-8300-2579176ffcee" />
 <img width="2560" height="2214" alt="screen" src="https://github.com/user-attachments/assets/4622eaf4-9c03-43ce-ae06-d7a4d6d7970d" />
+
+## Plugin 1 — Store & Product Management
+
+
+
+| ID | Use Case | User Story | Acceptance Criteria |
+|----|----------|------------|---------------------|
+| UC1.1 | Store Registration Form | As a Store Owner, I want to enter store details (name, food type, address, workers, license) so that my store can be onboarded and approved. | Given Store Owner on registration screen<br>When valid details submitted (e.g., name, dropdown for food type, address textarea, workers number input, license upload)<br>Then form validates, store profile saved pending approval, admin notified.<br>Edge: Optional workers field skipped → no error, defaults to 0.<br>Error: Invalid data (e.g., missing name) → inline errors, disabled submit; duplicate store name → "Store name already exists" toast. |
+| UC1.2 | Store Approval Workflow | As an Admin, I want to review and approve/reject store registrations so that only compliant stores are activated. | Given pending store in approval queue<br>When admin views details (e.g., click row for modal with license preview)<br>Then approve activates store, sends email to owner; reject prompts reason modal, notifies owner.<br>Edge: No pendings → empty state "No stores awaiting approval."<br>Error: Invalid license (e.g., poor quality) → flag in modal, re-upload request sent to owner. |
+| UC1.3 | Product Create/Upload Form | As a Store Owner, I want to create/upload product details (basic info, images, stock, SKU) so that products can be submitted for approval and inventory management. | Given Store Owner on product create screen (post-store approval)<br>When details entered (name/text, images drag-drop/multiple, stock number, SKU text with uniqueness check)<br>Then validates (e.g., image size <5MB), saves pending approval, syncs to inventory queue.<br>Edge: Multiple images → thumbnail previews with reorder/delete.<br>Error: Bad data (e.g., negative stock) → validation error; upload fail → "File type not supported (JPEG/PNG only)" message. |
+| UC1.4 | Product Approval Workflow | As an Admin, I want to review and approve/reject new products so that only valid products are listed in inventory and marketplace. | Given pending product in queue<br>When admin reviews (modal with details, images carousel, stock/SKU info)<br>Then approve adds to live inventory, notifies owner; reject with reason, allows resubmit.<br>Edge: Bulk approve/reject → checkboxes for multiple selections.<br>Error: Duplicate SKU → auto-reject with "Duplicate detected" log. |
+| UC1.5 | Product List & Read/View | As a Store Owner, I want to list and view my products with search/filter/sort/export so that I can manage large inventories efficiently. | Given Store Owner on products list screen<br>When searching (e.g., by name/SKU), filtering (e.g., by food type/low stock), sorting (e.g., by stock DESC)<br>Then displays paginated table (name, SKU, stock gauge, images thumbnail, actions), export button (CSV/PDF).<br>Edge: No products → empty state "No products yet - create one."<br>Error: Search fail (e.g., network) → retry button with warning. |
+| UC1.6 | Product Update/Edit | As a Store Owner, I want to edit existing product details (info, images, stock) so that I can update inventory without re-uploading. | Given Store Owner selects product from list<br>When edits in modal/form (update name, add/remove images, adjust stock)<br>Then saves changes, triggers re-approval if major (e.g., name change), syncs to inventory.<br>Edge: Minor edits (e.g., stock only) → no approval needed.<br>Error: Invalid update (e.g., duplicate SKU) → inline error; concurrent edit → version conflict modal "Refresh and try again." |
+| UC1.7 | Product Delete | As a Store Owner, I want to delete products (single or bulk) so that obsolete items are removed from inventory. | Given Store Owner on list screen<br>When selects product(s), clicks delete (confirm modal)<br>Then removes from DB, notifies warehouse if stocked, logs action.<br>Edge: Bulk delete → checkboxes, confirm with count "Delete X products?"<br>Error: Product in active order → block with error "Cannot delete - in use." |
+| UC1.8 | Bulk Product Upload/Import | As a Store Owner, I want to bulk upload products via CSV so that I can add multiple items efficiently for enterprise-scale operations. | Given Store Owner on bulk upload screen<br>When uploads CSV (template download link, columns: name, SKU, stock, food type, image URLs)<br>Then parses, validates rows, submits for batch approval, shows progress bar/report (e.g., "X succeeded, Y failed").<br>Edge: Partial success → list errors per row (e.g., "Row 5: Invalid stock").<br>Error: Invalid CSV format → error toast "Malformed file - download template." |
+| UC1.9 | Inventory Views & Updates | As a Store Owner, I want to view inventory updates, stock levels, and KPIs so that I can track product status without manual checks. | Given Store Owner on dashboard/inventory section<br>When data loads (real-time sync from warehouse)<br>Then displays table/cards (product name, SKU, stock level, updates list with timestamps), KPIs (e.g., low stock count, sales velocity chart).<br>Edge: Filter by status (e.g., pending approval) → dynamic table update.<br>Error: Sync failure → retry button, fallback to last known data with warning banner. |
+| UC1.10 | System Inventory Sync & Rules | As a system, I want to sync product CRUD actions to live inventory with rules (e.g., SKU mapping, low stock thresholds) so that warehouse and marketplace are updated automatically. | Given product CRUD event (create/update/delete/approve)<br>When sync triggers (background job)<br>Then updates inventory DB, applies rules (e.g., map SKU, flag low stock), notifies supervisor for shelf assignment, logs event.<br>Edge: Manual trigger by admin → override button in queue.<br>Error: Sync conflict (e.g., stock mismatch) → admin alert, rollback with error log. |
+
+## Wireframes of Marketplace
+
+<img width="2560" height="2612" alt="screen" src="https://github.com/user-attachments/assets/6bc63de2-d595-4592-82e7-86cd89d8fcea" />
+<img width="2644" height="1600" alt="screen" src="https://github.com/user-attachments/assets/48f14b32-8d35-448a-ba6a-17072d4795ac" />
+
+<img width="2560" height="2632" alt="screen" src="https://github.com/user-attachments/assets/e091c622-8412-4191-9b62-64718fca4c50" />
+<img width="2560" height="1754" alt="screen" src="https://github.com/user-attachments/assets/df08b3c8-1a9c-4e1a-aab7-5a0a25b6284a" />
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/c4cb594f-29d5-43dd-823d-064d3da37896" />
+
