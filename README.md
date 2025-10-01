@@ -1,4 +1,19 @@
-# a Proposal of a modular system.
+# Modular Enterprise Platform: Scalable Foundation for Shared Logistics and Multi-Channel Operations
+
+This platform operates as a modular system: a **base enterprise app** forms the core, handling universal essentials like user onboarding, secure access, role-based controls, basic insights, and payment basics. Plugins extend it with domain-specific features, integrating via shared backend and frontend routing—enabling phased builds, easy scaling (1,000+ users/10,000+ items), and resilience (retries, fallbacks). Users interact via role-tailored, responsive web/mobile dashboards, with automations for workflows like inventory syncs and financial checks.
+
+## Base Enterprise App
+Universal starter: Landing page for discovery; authentication (email/phone OTP, approvals); RBAC (roles/permissions, scoping); analytics (KPIs, oversight); payments (balance top-ups, gateway payouts)
+
+## Core Plugins (Domain-Specific Extensions)
+1. **Store & Product Management**: CRUD for stores/products (uploads, bulk CSV, approvals); food validations, inventory views. Syncs to listings.
+2. **Warehouse Management**: Staff CRUD (bulk adds); shelf assignments (QR maps); picking/packing; live tracking. Role-constrained.
+3. **Logistics Management**: API pickups (balance-gated); auto-routing, labels, tracking; manual fallbacks. Bulk scheduling.
+4. **Multi-Invoice & Billing**: Per-order splits (multi-party); VAT by category; accounting push; cycles/automations. Bulk gen.
+5. **Marketplace Management**: Listing sync (multi-API); order aggregation; manual entry. De-dupes.
+6. **Payout & Payment Handling**: Prepay top-ups; cycle payouts (multi-bank); balance enforcement. Audits.
+7. **Returns & Refunds**: RMA creation/authorization; restocking; refunds. Lifecycle reversal.
+8. **Audit & Logging**: Full transaction/API logs; retention/exports. Compliance trails.
 
 ## Base System (Foundation).
 
@@ -25,6 +40,8 @@
 | UC3.3 | Permission Granularity | As an Admin, I want to set fine-grained permissions (entity/action level) so that least privilege is enforced. | Given role creation/edit modal open<br>When permissions toggled (e.g., Read/Write for Analytics)<br>Then matrix updates, and on save, UI/API blocks unauthorized actions (403).<br>Edge: Constraint checkbox (e.g., one role per system) → adds scoping dropdown.<br>Error: Conflict with inheritance → warning banner "Overriding inherited permissions?" |
 | UC3.4 | Assign Roles | As an Admin, I want to assign roles to users or teams with scoping so that access is limited appropriately. | Given admin on "Assign Roles" tab<br>When users selected, role/scope chosen, and "Assign" clicked<br>Then assignments update, current roles column refreshes, toast "Assigned to X users."<br>Edge: Bulk select/unassign → confirm modal for changes.<br>Error: Constraint violation (e.g., one role per system) → toast "User already has role in this system - unassign first." |
 | UC3.5 | Audit Role Changes | As a system, I want to log role/permission changes and assignments so that admins can review security events. | Given RBAC event occurs (create, assign, delete)<br>When event triggers<br>Then log entry stored with actor, timestamp, before/after state; visible in system analytics.<br>Edge: Export logs → CSV download.<br>Error: Log failure → alert admin via email (if notifications enabled). |
+| Base3.6 | Strict Tenant Isolation | As a System, I want enforced data silos per seller so that cross-tenant access is impossible. | Given RBAC query<br>When checks tenant ID<br>Then blocks/queries only within seller's scope, logs violations.<br>Edge: Shared resources (e.g., carriers) → anonymized views.<br>Error: Breach attempt → 403 + admin alert. |
+| Base3.7 | Tenant Audit Isolation | As an Admin, I want tenant-specific audits so that seller data remains isolated in logs. | Given log export<br>When filters by tenant<br>Then exports only scoped data, masks others.<br>Edge: Global admin → opt-in cross-tenant.<br>Error: Unscoped export → block "Isolation violation." |
 
 ### Feature 4 — Analytics
 | ID | Use Case | User Story | Acceptance Criteria |
@@ -113,6 +130,10 @@
 | UC2.9 | Warehouse Order Creation | As a Supervisor, I want to create warehouse orders from arrivals/marketplace so that picking/packing can begin. | Given arrival/order received<br>When creates order (select products, assign to worker)<br>Then generates order ID, updates status (Pending → Assigned), notifies worker.<br>Edge: Bulk from batch arrival → auto-populate.<br>Error: Insufficient stock → block "Adjust quantities." |
 | UC2.10 | Picking & Packing Workflow | As a Worker, I want to pick and pack orders using QR validation so that fulfillment is accurate. | Given Worker on order screen<br>When scans product/shelf for pick, confirms pack (quantity check)<br>Then validates (e.g., packing-validation), updates status to Packed, logs.<br>Edge: Partial pick → save progress.<br>Error: Wrong item → error "Mismatch - rescan correct product." |
 | UC2.11 | System Inventory Sync & Tracking | As a system, I want to sync inventory movements (assignments, picks) with shelf tracking so that real-time accuracy is maintained. | Given movement event (assign/store/pick)<br>When sync triggers<br>Then updates DB, applies rules (e.g., low stock alert), logs with timestamps.<br>Edge: Manual override by supervisor → audit log.<br>Error: Conflict (e.g., race condition) → rollback, alert admin. |
+| UC2.12 | Wave Picking Setup | As a Supervisor, I want to create picking waves grouped by SLA/cutoff so that priorities are handled first. | Given orders list<br>When groups into wave (SLA priority, courier cutoff filters)<br>Then assigns wave ID, notifies workers.<br>Edge: Auto-group low-priority.<br>Error: Overlap → "Resolve conflicts." |
+| UC2.13 | Wave Progress Tracking | As a Worker, I want wave progress visibility so that I track completion in real-time. | Given mobile app<br>When joins wave<br>Then shows progress bar (picked/total), alerts on delays.<br>Edge: Partial complete → auto-close.<br>Error: Delay → SLA alert. |
+| UC2.14 | Mobile WMS Core | As a Worker, I want a dedicated mobile app for picking/packing so that warehouse tasks are optimized for on-the-go use. | Given worker logs in on mobile<br>When accesses QR scan/map<br>Then app uses device camera/GPS for real-time, offline queuing.<br>Edge: Low battery → simplified UI.<br>Error: Offline → sync on reconnect. |
+| UC2.15 | Mobile Staff Onboarding | As a Supervisor, I want mobile-first staff setup so that new workers can scan QR and start tasks immediately. | Given new worker on app<br>When scans invite QR<br>Then auto-assigns role, loads dashboard.<br>Edge: Web fallback → QR link.<br>Error: Scan fail → manual code entry. |
 
 ## Wireframes
 
@@ -139,6 +160,10 @@
 | UC3.9 | Label Generation & Printing | As a Supervisor, I want to generate and print shipping labels so that packages are prepared for carriers. | Given routed order<br>When generates label (button on order view)<br>Then creates PDF (with barcode, addresses, tracking #), offers print/download.<br>Edge: Custom formats per carrier.<br>Error: Generation fail → retry, log "API error." |
 | UC3.10 | Real-Time Tracking Updates | As a Store Owner/Supervisor, I want real-time tracking for shipments so that status is visible without manual checks. | Given order in view/list<br>When updates from carrier API (e.g., In Transit → Delivered)<br>Then refreshes UI (websocket), notifies users, logs history.<br>Edge: Timeline view → steps (Scheduled > Picked > Delivered).<br>Error: API delay → "Tracking delayed - check later" banner. |
 | UC3.11 | System Integration & Fallback | As a system, I want to integrate with Torod/carriers for automation with fallbacks so that reliability is ensured. | Given API call (pickup/route/track)<br>When succeeds → processes; fails → switches to manual, retries queue.<br>Edge: Configurable retries (e.g., 3 attempts).<br>Error: Persistent fail → admin alert, log details. |
+| UC3.12 | Tag Creation & Assignment | As a Supervisor, I want to assign structured tags (Fragile/COD) to orders so that handling rules apply. | Given order edit<br>When adds tags (dropdown: Fragile/Hazmat)<br>Then auto-applies workflows (e.g., special packing).<br>Edge: Bulk tag.<br>Error: Invalid tag → "Not applicable." |
+| UC3.13 | Rule-Driven Workflows | As a System, I want rules for tags (e.g., Hazmat: restricted carriers) so that compliance is automated. | Given tagged order<br>When processes<br>Then enforces (e.g., route to safe carrier).<br>Edge: Configurable rules.<br>Error: Rule conflict → alert. |
+| UC3.14 | Tag Visibility in Apps | As a Worker, I want tag visibility in mobile apps so that handling is informed. | Given picking screen<br>When loads tagged order<br>Then highlights tags with icons/tooltips.<br>Edge: Audio alerts for Fragile.<br>Error: Hidden tag → log exposure. |
+| UC3.15 | Tags List & Management | As an Admin, I want tag management with search/export so that tags are governed. | Given tags screen<br>When creates/edits<br>Then lists with rules preview.<br>Edge: Export mappings.<br>Error: Duplicate tag → merge. |
 
 ## Wireframes
 <img width="2560" height="1786" alt="screen" src="https://github.com/user-attachments/assets/bd0bfbec-4e5b-48f9-b111-e3581a5a1e12" />
@@ -166,7 +191,8 @@
 | UC5.9 | QuickBooks Sync | As an Accountant, I want to push invoice records to QuickBooks so that accounting is unified. | Given invoice ready (generated/paid)<br>When sync triggers (manual or auto)<br>Then pushes to QuickBooks (e.g., as journal entries), reconciles, logs status.<br>Edge: Bulk sync → select date range.<br>Error: Sync fail → retry, alert "Reconcile manually." |
 | UC5.10 | Invoice Splitting Logic | As a system, I want automated splitting based on roles/parties so that multi-party billing is accurate. | Given order with parties (warehouse/store/marketplace/platform)<br>When splits<br>Then allocates amounts (e.g., platform: fee %), applies VAT per category, generates copies.<br>Edge: Custom rules → admin-configurable.<br>Error: Misrouting → auto-re-route based on role map. |
 | UC5.11 | Audit & Compliance Trails | As an Admin, I want audit logs for invoices (generation, edits, syncs) so that disputes/VAT audits are resolvable. | Given invoice event (generate/edit/sync)<br>When logs<br>Then stores with timestamps, actors, before/after, exportable for 90 days.<br>Edge: VAT disputes → filter by category.<br>Error: Log fail → alert, fallback local storage. |
-
+| UC5.12 | Ad Hoc Activity Config | As an Accountant, I want configurable ad hoc fees (e.g., extra weight) so that they auto-trigger invoices. | Given setup screen<br>When defines activity (fee type, trigger rules e.g., weight >10kg)<br>Then auto-adds to invoice on match.<br>Edge: Per-store rates.<br>Error: Rule conflict → validation warning. |
+| UC5.13 | Ad Hoc Invoice Trigger | As a System, I want auto-triggers for ad hoc billing so that fees integrate with orders. | Given order event (e.g., heavy package)<br>When rule matches<br>Then adds line item, re-generates invoice.<br>Edge: Bulk orders → aggregate fees.<br>Error: Trigger fail → manual flag. |
 ## Wireframes
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/224e609d-42c6-4d82-87e4-a3b87dfafa43" />
 <img width="256<img width="2560" height="1652" alt="screen" src="https://github.com/user-attachments/assets/462bfd0e-599d-45be-8197-39f370e7fcab" />
@@ -259,3 +285,38 @@ Focus: API logging, transaction logs, retention policies (90 days export to SIEM
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/c9405db5-13b1-4a3a-8ca6-b0b433f7dc23" />
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/873c526a-be47-41a6-abf9-6796a4339771" />
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/cbda77e1-35ba-4895-9c5f-5a119ecbf092" />
+
+
+
+## Plugin 9: SLAs Enforcement & Monitoring
+Focus: Sync SLA enforcement (<30s) with alerts/compensation; real-time monitoring beyond basic errors.
+
+| ID | Use Case | User Story | Acceptance Criteria |
+|----|----------|------------|---------------------|
+| UC13.1 | SLA Monitoring Setup | As an Admin, I want SLA thresholds (e.g., <30s sync) so that performance is tracked. | Given setup<br>When defines (sync/order SLAs)<br>Then monitors via metrics, alerts on breach.<br>Edge: Custom per workflow.<br>Error: Metric fail → fallback calc. |
+| UC13.2 | SLA Alerts & Notifications | As a System, I want alerts on SLA misses so that issues are resolved. | Given breach (e.g., sync >30s)<br>Then sends push/email, logs.<br>Edge: Escalation tiers.<br>Error: Alert loop → throttle. |
+| UC13.3 | SLA Compensation Workflow | As an Admin, I want auto-compensation (e.g., fee waiver) on misses so that SLAs are enforceable. | Given breach confirmed<br>When triggers<br>Then applies credit to invoice, notifies.<br>Edge: Threshold % for waiver.<br>Error: No balance → queue. |
+| UC13.4 | SLA Dashboard | As an Admin, I want SLA reports so that compliance is visualized. | Given dashboard<br>When views (charts: on-time %)<br>Then exports data.<br>Edge: Filter by service.<br>Error: Data gap → warning. |
+
+
+
+## Non-Functional Requirements
+
+The platform ensures high performance, reliability, security, and compliance across the base app and all plugins (e.g., store management, warehouse operations, logistics routing, POS sync, billing splits, marketplace listings, payouts, returns, reporting, audits, and localization). Targets are verified via acceptance criteria, with enforcement through monitoring, SLAs, and fallbacks.
+
+| Requirement          | Target Specification                          | Acceptance Criteria                                      |
+|----------------------|-----------------------------------------------|----------------------------------------------------------|
+| **Performance**     | <1s load time on main flows (e.g., order sync, listing updates) | 90% of traffic completes actions in under 1s; real-time validations (e.g., stock checks) <500ms |
+| **Availability**    | 99.5% uptime across integrations (e.g., APIs for POS/billing) | Downtime <2 hrs per month; automated retries for carrier/marketplace syncs |
+| **Scalability**     | Horizontally scalable edge functions         | Supports 1,000+ active stores, 10,000+ SKUs/items; handles bulk ops (e.g., 500+ payouts/cycles) |
+| **Mobile Readiness**| Web + app parity for all roles (e.g., worker QR scanning, supervisor waves) | Shared codebase with responsive/RTL layout; offline queuing in warehouse/POS plugins |
+| **Legal Compliance**| VAT rules, KSA/GCC food/regional regulations | Contracts/invoices reflect compliance; audit trails for tags/transfers (90-day retention) |
+| **Security**        | Strict multi-tenant isolation (RLS/endpoint hardening) | Role scoping blocks cross-tenant access; logs violations with alerts; secure API keys/OAuth for connectors |
+| **Integration Reliability** | <30s SLA for syncs (e.g., marketplace kits, carrier city mapping) | Enforcement with alerts/compensation (e.g., fee waivers); fallbacks for inbound QC/ad hoc billing |
+| **Accessibility**   | WCAG 2.1 AA compliance (e.g., tag visibility, multi-lang) | Screen reader support for reports/audits; keyboard nav in mobile WMS; i18n for EN/AR with Hijri dates |
+| **Data Integrity**  | No duplicates/race conditions (e.g., stock transfers, wave picking) | Real-time locks/validation; de-dup logic for aggregated orders/returns; BOM sync for kits
+
+
+
+
+
