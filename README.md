@@ -1,6 +1,6 @@
 # Modular Enterprise Platform: Scalable Foundation for Shared Logistics and Multi-Channel Operations
 
-This platform operates as a modular system: a **base enterprise app** forms the core, handling universal essentials like user onboarding, secure access, role-based controls, basic insights, and payment basics. Plugins extend it with domain-specific features, integrating via shared backend and frontend routing—enabling phased builds, easy scaling (1,000+ users/10,000+ items), and resilience (retries, fallbacks). Users interact via role-tailored, responsive web/mobile dashboards, with automations for workflows like inventory syncs and financial checks.
+This platform operates as a modular system: a **base enterprise app** forms the core, handling universal essentials like user onboarding, secure access, role-based controls, basic insights, and payment basics. Plugins extend it with domain-specific features, integrating via shared backend and frontend routing—enabling phased builds, easy scaling (10,000+ users/100,000+ items), and resilience (retries, fallbacks). Users interact via role-tailored, responsive web/mobile dashboards, with automations for workflows like inventory syncs and financial checks.
 
 ## Base Enterprise App
 Universal starter: Landing page for discovery; authentication (email/phone OTP, approvals); RBAC (roles/permissions, scoping); analytics (KPIs, oversight); payments (balance top-ups, gateway payouts)
