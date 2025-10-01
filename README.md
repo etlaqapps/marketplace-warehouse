@@ -98,7 +98,7 @@
 <img width="2560" height="1754" alt="screen" src="https://github.com/user-attachments/assets/df08b3c8-1a9c-4e1a-aab7-5a0a25b6284a" />
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/c4cb594f-29d5-43dd-823d-064d3da37896" />
 
-## Plugin: Warehouse Management
+## Plugin 2: Warehouse Management
 
 | ID | Use Case | User Story | Acceptance Criteria |
 |----|----------|------------|---------------------|
@@ -124,7 +124,7 @@
 <img width="2560" height="1768" alt="screen" src="https://github.com/user-attachments/assets/c5c14922-e6d7-47ff-989b-bf97212540ae" />
 
 
-## Plugin: Logistics Management
+## Plugin 3: Logistics Management
 
 | ID | Use Case | User Story | Acceptance Criteria |
 |----|----------|------------|---------------------|
@@ -150,7 +150,7 @@
 <img width="2560" height="2420" alt="screen" src="https://github.com/user-attachments/assets/6c28e383-8f4d-4b68-9e1e-82913ac5d0e8" />
 <img width="2560" height="2292" alt="screen" src="https://github.com/user-attachments/assets/944b38e0-4275-42e2-997a-65e12cf6f782" />
 
-## Multi-Invoice Generation & Billing
+## Plugin 4: Multi-Invoice Generation & Billing
 
 
 | ID | Use Case | User Story | Acceptance Criteria |
@@ -177,7 +177,7 @@
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/5fafd9c5-4ca1-4e1e-8475-4c9e6744111b" />
 
 
-## Plugin: Marketplace Management
+## Plugin 5: Marketplace Management
 
 
 | ID | Use Case | User Story | Acceptance Criteria |
@@ -203,7 +203,7 @@
 <img width="2560" height="2054" alt="screen" src="https://github.com/user-attachments/assets/49b29405-abaf-4127-b599-2bdef014d929" />
 <img width="2560" height="3326" alt="screen" src="https://github.com/user-attachments/assets/68320331-b471-418a-9494-433614aa912f" />
 
-## Plugin: Payout Handling & Payment
+## Plugin 6: Payout Handling & Payment
 
 | ID | Use Case | User Story | Acceptance Criteria |
 |----|----------|------------|---------------------|
@@ -227,3 +227,35 @@
 <img width="2530" height="3780" alt="screen" src="https://github.com/user-attachments/assets/54b900cd-cd98-4383-8ae2-9649d27fa610" />
 <img width="2560" height="1996" alt="screen" src="https://github.com/user-attachments/assets/070ea162-e679-44e6-b1b3-35ea4bf44e32" />
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/e6f6e4d0-fec9-44df-96e8-56d4fe1e61ae" />
+
+
+## Plugin 7: Returns & Refunds Management
+Focus: RMA (Return Merchandise Authorization), return authorization, restock to inventory, refund processing. Integrates with order lifecycle (e.g., reverse Shipped → Returned) and payments (Moyasar refunds). Unique to OMS/WMS for handling post-fulfillment returns; Shelfy omits this.
+
+| ID | Use Case | User Story | Acceptance Criteria |
+|----|----------|------------|---------------------|
+| UC8.1 | RMA Creation | As a Seller, I want to create an RMA for a returned order so that returns are tracked and processed. | Given returned order<br>When seller submits RMA (reason dropdown, photos upload)<br>Then generates RMA ID, updates order status to Returned, notifies warehouse.<br>Edge: Partial return → adjust quantities.<br>Error: Invalid order → "Order not eligible for return." |
+| UC8.2 | Return Authorization | As a Staff, I want to authorize returns with inspection so that valid returns are approved. | Given RMA submitted<br>When staff reviews (modal with photos, condition check)<br>Then approves/rejects, triggers restock/refund.<br>Edge: Auto-approve low-value.<br>Error: Inspection fail → reject with reason email. |
+| UC8.3 | Restock to Inventory | As a System, I want to restock returned items to inventory so that stock levels are accurate. | Given approved return<br>When restock triggers<br>Then adds back to shelf/SKU, syncs availability.<br>Edge: Condition downgrade → partial stock.<br>Error: Shelf full → queue for reassignment. |
+| UC8.4 | Refund Processing | As a Seller, I want to issue refunds via Moyasar so that customers are reimbursed. | Given authorized RMA<br>When refund initiated (amount calc from order)<br>Then processes via gateway, updates balance.<br>Edge: Partial refund → split.<br>Error: Gateway fail → retry queue. |
+| UC8.5 | Returns List & View | As a Seller/Staff, I want to list/view RMAs with search/filter/export so that returns are managed. | Given returns screen<br>When filtering (status/date)<br>Then table shows ID, order link, status, refund amount.<br>Edge: Export CSV with details.<br>Error: Load fail → retry. |
+
+
+
+### Plugin 8: Audit & Logging
+Focus: API logging, transaction logs, retention policies (90 days export to SIEM). Unique to OMS/WMS for security/compliance; Shelfy has basic error handling but no full audit.
+
+| ID | Use Case | User Story | Acceptance Criteria |
+|----|----------|------------|---------------------|
+| UC10.1 | Transaction Logging | As a System, I want to log all transactions (orders/payments) so that audits are traceable. | Given event (e.g., order update)<br>When logs<br>Then stores actor/timestamp/before-after.<br>Edge: Retention 90 days auto-purge.<br>Error: Log fail → alert, local store. |
+| UC10.2 | API Logging & Metrics | As an Admin, I want API logs/metrics (e.g., sync errors) so that integrations are monitored. | Given logs screen<br>When filters (API endpoint/date)<br>Then table with calls/status, export CSV.<br>Edge: Alerts on high errors.<br>Error: No logs → "Quiet period." |
+| UC10.3 | Audit Report Export | As an Admin, I want to export audit logs for compliance so that reviews are easy. | Given export button<br>When selects range<br>Then generates SIEM-compatible file.<br>Edge: Filter by user/event type.<br>Error: Large export → chunked download. |
+
+## Wirframes
+
+<img width="2560" height="2008" alt="screen" src="https://github.com/user-attachments/assets/bbdbf723-277f-4f1c-b2a3-e137fb632cd6" />
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/176717c4-431a-4c0f-80ac-572ea78aa8af" />
+
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/c9405db5-13b1-4a3a-8ca6-b0b433f7dc23" />
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/873c526a-be47-41a6-abf9-6796a4339771" />
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/cbda77e1-35ba-4895-9c5f-5a119ecbf092" />
