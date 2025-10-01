@@ -141,3 +141,37 @@
 | UC3.11 | System Integration & Fallback | As a system, I want to integrate with Torod/carriers for automation with fallbacks so that reliability is ensured. | Given API call (pickup/route/track)<br>When succeeds → processes; fails → switches to manual, retries queue.<br>Edge: Configurable retries (e.g., 3 attempts).<br>Error: Persistent fail → admin alert, log details. |
 
 ## Wireframes
+<img width="2560" height="1786" alt="screen" src="https://github.com/user-attachments/assets/bd0bfbec-4e5b-48f9-b111-e3581a5a1e12" />
+<img width="2560" height="2488" alt="screen" src="https://github.com/user-attachments/assets/f65b7a55-d7f2-4104-a9c9-edae03104f08" />
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/18c3a8c6-f950-4229-8dd0-e8239c7f930e" />
+<img width="2560" height="2952" alt="screen" src="https://github.com/user-attachments/assets/be9d8439-5da0-4805-bda0-29f9d36249c4" />
+<img width="2560" height="2952" alt="screen" src="https://github.com/user-attachments/assets/f7521412-457f-4ad5-94a2-ea20aab8e41a" />
+<img width="2560" height="2398" alt="screen" src="https://github.com/user-attachments/assets/a319065b-b9c1-4826-bd71-a274b9c532cc" />
+<img width="2560" height="2420" alt="screen" src="https://github.com/user-attachments/assets/6c28e383-8f4d-4b68-9e1e-82913ac5d0e8" />
+<img width="2560" height="2292" alt="screen" src="https://github.com/user-attachments/assets/944b38e0-4275-42e2-997a-65e12cf6f782" />
+
+## Multi-Invoice Generation & Billing
+
+
+| ID | Use Case | User Story | Acceptance Criteria |
+|----|----------|------------|---------------------|
+| UC5.1 | Multi-Invoice Generation per Order | As an Accountant, I want automated multi-invoice generation (warehouse, store, marketplace, platform copies) on order creation so that parties receive accurate billing. | Given order created (from POS/logistics)<br>When generation triggers<br>Then splits invoice by party (e.g., warehouse: storage fees; store: product cost), generates PDFs, stores copies, notifies parties.<br>Edge: Custom splits → configurable percentages.<br>Error: Split logic fail → manual override modal, log "Recompute required." |
+| UC5.2 | VAT Handling & Categorization | As an Accountant, I want VAT applied based on store category so that invoices comply with regulations. | Given invoice generation<br>When category checked (e.g., Family Product: No VAT; VAT-compliant: 15%)<br>Then applies rate, adds audit trail, tags invoice.<br>Edge: Category change → retroactive re-calc for open invoices.<br>Error: Undetermined category → prompt "Categorize store first" with link. |
+| UC5.3 | Invoice List & View | As an Accountant/Store Owner, I want to list and view invoices with search/filter/sort/export/previews so that I can manage billing efficiently. | Given user on invoices list screen<br>When searching (e.g., by order ID/party), filtering (e.g., status: Generated/Paid, VAT type), sorting (e.g., date DESC)<br>Then displays paginated table (ID, order link, parties summary, VAT total, status, actions), export (CSV/PDF), preview button.<br>Edge: Multi-party view → expandable rows for splits.<br>Error: Load fail → retry, fallback to cached. |
+| UC5.4 | Invoice Update/Edit | As an Accountant, I want to edit invoice details (e.g., splits, VAT re-calc) so that corrections can be made for disputes. | Given invoice selected<br>When edits (adjust splits, re-categorize VAT, add notes)<br>Then re-generates, syncs to QuickBooks, notifies parties.<br>Edge: Locked post-payment → view-only.<br>Error: Invalid split (e.g., over 100%) → inline error; concurrent edit → "Refresh changes." |
+| UC5.5 | Invoice Delete/Void | As an Accountant, I want to void invoices (single or bulk) so that errors are reversed. | Given invoice(s) selected<br>When voids (confirm modal with reason)<br>Then marks as Voided, reverses splits/inventory if applicable, logs.<br>Edge: Bulk void → checkboxes, confirm count.<br>Error: Paid invoice → block "Cannot void - issue credit note." |
+| UC5.6 | Bulk Invoice Generation | As an Accountant, I want to bulk generate invoices for multiple orders so that periodic billing is efficient. | Given bulk screen (select orders or by cycle)<br>When generates (auto-split/VAT)<br>Then processes batch, shows report (e.g., "X generated, Y errors").<br>Edge: Cycle-based → auto-run on schedule (e.g., monthly).<br>Error: Batch fail → partial, error list per invoice. |
+| UC5.7 | Billing Cycles Management | As an Accountant, I want configurable billing cycles (e.g., weekly/monthly) with automations so that recurring invoices are handled. | Given cycle setup (e.g., Monday/Thursday from Moyasar)<br>When cycle runs<br>Then aggregates orders, generates invoices, deducts from balance.<br>Edge: Custom intervals → calendar picker.<br>Error: Overdue → alert "Process manually." |
+| UC5.8 | Payment Gateway Integration | As a system, I want integration with Moyasar for invoice payments so that collections are automated. | Given invoice generated<br>When payment link sent (via email/portal)<br>Then processes via Moyasar, updates status to Paid, syncs balance.<br>Edge: Partial payment → split remaining.<br>Error: Gateway fail → retry queue, notify "Payment pending." |
+| UC5.9 | QuickBooks Sync | As an Accountant, I want to push invoice records to QuickBooks so that accounting is unified. | Given invoice ready (generated/paid)<br>When sync triggers (manual or auto)<br>Then pushes to QuickBooks (e.g., as journal entries), reconciles, logs status.<br>Edge: Bulk sync → select date range.<br>Error: Sync fail → retry, alert "Reconcile manually." |
+| UC5.10 | Invoice Splitting Logic | As a system, I want automated splitting based on roles/parties so that multi-party billing is accurate. | Given order with parties (warehouse/store/marketplace/platform)<br>When splits<br>Then allocates amounts (e.g., platform: fee %), applies VAT per category, generates copies.<br>Edge: Custom rules → admin-configurable.<br>Error: Misrouting → auto-re-route based on role map. |
+| UC5.11 | Audit & Compliance Trails | As an Admin, I want audit logs for invoices (generation, edits, syncs) so that disputes/VAT audits are resolvable. | Given invoice event (generate/edit/sync)<br>When logs<br>Then stores with timestamps, actors, before/after, exportable for 90 days.<br>Edge: VAT disputes → filter by category.<br>Error: Log fail → alert, fallback local storage. |
+
+## Wireframes
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/224e609d-42c6-4d82-87e4-a3b87dfafa43" />
+<img width="256<img width="2560" height="1652" alt="screen" src="https://github.com/user-attachments/assets/462bfd0e-599d-45be-8197-39f370e7fcab" />
+0" height="2434" alt="screen" src="https://github.com/user-attachments/assets/c6ca4ad8-a75e-47e4-bcb7-93847e6bca59" />
+<img width="2560" height="1728" alt="screen" src="https://github.com/user-attachments/assets/e218fe11-19fb-4970-826f-2bb696f689da" />
+<img width="2560" height="1722" alt="screen" src="https://github.com/user-attachments/assets/ad99082f-7d9c-4c20-a96b-43b8b58cff77" />
+
+<img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/5fafd9c5-4ca1-4e1e-8475-4c9e6744111b" />
