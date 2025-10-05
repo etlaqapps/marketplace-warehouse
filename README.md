@@ -314,7 +314,16 @@ The platform ensures high performance, reliability, security, and compliance acr
 | **Security**        | Strict multi-tenant isolation (RLS/endpoint hardening) | Role scoping blocks cross-tenant access; logs violations with alerts; secure API keys/OAuth for connectors |
 | **Integration Reliability** | <30s SLA for syncs (e.g., marketplace kits, carrier city mapping) | Enforcement with alerts/compensation (e.g., fee waivers); fallbacks for inbound QC/ad hoc billing |
 | **Accessibility**   | WCAG 2.1 AA compliance (e.g., tag visibility, multi-lang) | Screen reader support for reports/audits; keyboard nav in mobile WMS; i18n for EN/AR with Hijri dates |
-| **Data Integrity**  | No duplicates/race conditions (e.g., stock transfers, wave picking) | Real-time locks/validation; de-dup logic for aggregated orders/returns; BOM sync for kits
+| **Data Integrity**  | No duplicates/race conditions (e.g., stock transfers, wave picking) | Real-time locks/validation; de-dup logic for aggregated orders/returns; BOM sync for kit
+
+]'
+## Timeline
+100 days
+
+## Price
+85k SAR
+
+t
 
 
 
