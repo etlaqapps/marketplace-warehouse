@@ -266,7 +266,7 @@ Universal starter: Landing page for discovery; authentication (email/phone OTP, 
 
 ## Plugin 7: Returns & Refunds Management
 
-Focus: RMA (Return Merchandise Authorization), return authorization, restock to inventory, refund processing. Integrates with order lifecycle (e.g., reverse Shipped → Returned) and payments (Moyasar refunds). Unique to OMS/WMS for handling post-fulfillment returns; Shelfy omits this.
+Focus: RMA (Return Merchandise Authorization), return authorization, restock to inventory, refund processing. Integrates with order lifecycle (e.g., reverse Shipped → Returned) and payments (Moyasar refunds).
 
 | ID    | Use Case             | User Story                                                                                           | Acceptance Criteria                                                                                                                                                                                                                                                      |
 | ----- | -------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -278,7 +278,7 @@ Focus: RMA (Return Merchandise Authorization), return authorization, restock to 
 
 ### Plugin 8: Audit & Logging
 
-Focus: API logging, transaction logs, retention policies (90 days export to SIEM). Unique to OMS/WMS for security/compliance; Shelfy has basic error handling but no full audit.
+Focus: API logging, transaction logs, retention policies (90 days export to SIEM).
 
 | ID     | Use Case              | User Story                                                                                   | Acceptance Criteria                                                                                                                                                        |
 | ------ | --------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
