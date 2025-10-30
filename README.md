@@ -1,21 +1,25 @@
-# Modular Enterprise Platform: Scalable System for Warehouse Management and Multi-Channel Commerce | A porposal by Etlaq
+# Private Multi-Warehouse Fulfillment Operating System: WMS/OMS Solution for 3PL Operations
 
-This platform delivers a scalable solution for managing shared warehouses, multi-channel marketplaces, inventory synchronization, order fulfillment, and financial transparency—empowering store owners to handle product uploads, logistics, sales, and payouts efficiently. Built as a modular system, a **base enterprise app** establishes the core, managing essentials like user onboarding, secure authentication, role-based access, basic analytics, and payment processing. Plugins layer on specialized capabilities, integrating through unified backend and frontend frameworks to support phased development, seamless scaling (to 10,000+ users and 100,000+ items), and robust reliability (with retries and fallbacks). Users engage via customized, responsive web and mobile dashboards, enhanced by automations for workflows such as real-time stock updates and transaction validations.
+This platform operates as a comprehensive fulfillment operating system: a **core WMS/OMS foundation** handles warehouse management, order fulfillment, merchant operations, and billing. Domain modules extend it with specialized 3PL capabilities, integrating via shared backend and frontend routing—enabling phased builds, multi-warehouse scaling (10+ facilities, 100,000+ SKUs), and operational resilience (ASN tracking, QC workflows, automated routing). Users interact via role-tailored, responsive web/mobile dashboards, with automations for workflows like ASN receiving, wave picking, FEFO compliance, and real-time billing reconciliation.
 
 ## Base Enterprise App
-A versatile foundation providing: a landing page for user discovery; authentication with email/phone OTP and admin approvals; RBAC for granular roles, permissions, and tenant scoping; analytics for KPIs and system oversight; and payments for balance top-ups and gateway-integrated payouts.
+
+Universal starter: Landing page for discovery; authentication (email/phone OTP, approvals); RBAC (roles/permissions, scoping); analytics (KPIs, oversight); payments (balance top-ups, gateway payouts)
 
 ## Core Plugins (Domain-Specific Extensions)
 
-1. **Store & Product Management**: CRUD for stores/products (uploads, bulk CSV, approvals); food validations, inventory views. Syncs to listings.
-2. **Warehouse Management**: Staff CRUD (bulk adds); shelf assignments (QR maps); picking/packing; live tracking. Role-constrained.
-3. **Logistics Management**: API pickups (balance-gated); auto-routing, labels, tracking; manual fallbacks. Bulk scheduling.
-4. **Multi-Invoice & Billing**: Per-order splits (multi-party); VAT by category; accounting push; cycles/automations. Bulk gen.
-5. **Marketplace Management**: Listing sync (multi-API); order aggregation; manual entry. De-dupes.
-6. **Payout & Payment Handling**: Prepay top-ups; cycle payouts (multi-bank); balance enforcement. Audits.
-7. **Returns & Refunds**: RMA creation/authorization; restocking; refunds. Lifecycle reversal.
-8. **Audit & Logging**: Full transaction/API logs; retention/exports. Compliance trails.
-9. **SLAs Enforcement & Monitoring**
+1. **Store & Product Management**: CRUD for stores/products (uploads, bulk CSV, approvals); validations, inventory views. Syncs to listings.
+2. **Warehouse Core**: ASN/PO receiving, QC on receiving, system-suggested put-away, cycle counting, bin capacity tracking, multi-warehouse support.
+3. **Fulfillment Operations**: Wave & batch picking, scan-to-pick/pack enforcement, route optimization, packing validation, fulfillment status tracking.
+4. **Compliance Tracking**: FEFO, batch/lot tracking, expiry management, recall workflows, QC policies.
+5. **Merchant Portal**: Order visibility, inventory reports, performance analytics, billing dashboards, real-time tracking.
+6. **Logistics Management**: API pickups (balance-gated); auto-routing, labels, tracking; manual fallbacks. Bulk scheduling.
+7. **Multi-Invoice & Billing**: Per-order splits (multi-party); VAT by category; accounting push; cycles/automations. Bulk gen.
+8. **Marketplace Management**: Listing sync (multi-API); order aggregation; manual entry. De-dupes.
+9. **Payout & Payment Handling**: Prepay top-ups; cycle payouts (multi-bank); balance enforcement. Audits.
+10. **Returns & Refunds**: RMA creation/authorization; restocking; refunds. Lifecycle reversal.
+11. **Audit & Logging**: Full transaction/API logs; retention/exports. Compliance trails.
+12. **SLAs Enforcement & Monitoring**
 
 ## Base System (Foundation).
 
@@ -142,6 +146,11 @@ A versatile foundation providing: a landing page for user discovery; authenticat
 | UC2.13 | Wave Progress Tracking           | As a Worker, I want wave progress visibility so that I track completion in real-time.                                                                        | Given mobile app<br>When joins wave<br>Then shows progress bar (picked/total), alerts on delays.<br>Edge: Partial complete → auto-close.<br>Error: Delay → SLA alert.                                                                                                                                                                                                                                                                                         |
 | UC2.14 | Mobile WMS Core                  | As a Worker, I want a dedicated mobile app for picking/packing so that warehouse tasks are optimized for on-the-go use.                                      | Given worker logs in on mobile<br>When accesses QR scan/map<br>Then app uses device camera/GPS for real-time, offline queuing.<br>Edge: Low battery → simplified UI.<br>Error: Offline → sync on reconnect.                                                                                                                                                                                                                                                   |
 | UC2.15 | Mobile Staff Onboarding          | As a Supervisor, I want mobile-first staff setup so that new workers can scan QR and start tasks immediately.                                                | Given new worker on app<br>When scans invite QR<br>Then auto-assigns role, loads dashboard.<br>Edge: Web fallback → QR link.<br>Error: Scan fail → manual code entry.                                                                                                                                                                                                                                                                                         |
+| UC2.16 | ASN/PO Receiving                 | As a Warehouse Operator, I want to receive purchase orders with ASN processing so that inbound shipments are accurately documented.                          | Given ASN/PO received<br>When operator scans/inputs ASN details (supplier, items, quantities)<br>Then validates against expected receipt, flags variances (over/under/shortages), creates receiving record.<br>Edge: Partial receipt → update existing ASN.<br>Error: ASN not found → manual entry option with escalation for approval.                                                                                                                       |
+| UC2.17 | System-Suggested Put-Away        | As a Warehouse Operator, I want automated bin recommendations for storage so that optimal space utilization is achieved.                                     | Given QC-approved items<br>When system analyzes (SKU, dimensions, expiry, demand patterns)<br>Then suggests optimal bin locations with utilization metrics, allows manual override.<br>Edge: Multi-SKU bins → consolidation recommendations.<br>Error: No available bins → alert supervisor for capacity planning.                                                                                                                                            |
+| UC2.18 | Cycle Counting & Approvals       | As a Supervisor, I want to perform inventory audits with approval workflows so that accuracy is maintained.                                                  | Given cycle count schedule<br>When operator counts items in assigned bins<br>Then records counts, supervisor reviews variances, approves adjustments.<br>Edge: Automated scheduling → based on ABC analysis.<br>Error: Large variance → escalation to management with photo evidence required.                                                                                                                                                                |
+| UC2.19 | Bin Capacity Tracking            | As a Warehouse Manager, I want to monitor bin utilization and capacity so that space planning is data-driven.                                                | Given bin operations<br>When tracks CBM, weight limits, utilization %<br>Then displays capacity dashboards, alerts on over-utilization, optimizes put-away recommendations.<br>Edge: Forecasting → predict capacity needs.<br>Error: Capacity exceeded → block put-away with re-routing.                                                                                                                                                                      |
+| UC2.20 | Multi-Warehouse Support          | As a System Admin, I want to configure and manage multiple warehouse facilities so that distributed operations are supported.                                | Given warehouse setup<br>When configures facilities (locations, bins, staff assignments)<br>Then enables cross-warehouse transfers, inventory visibility, unified reporting.<br>Edge: Transfer requests → approval workflows.<br>Error: Duplicate warehouse codes → validation error.                                                                                                                                                                         |
 
 ## Wireframes
 
@@ -151,6 +160,16 @@ A versatile foundation providing: a landing page for user discovery; authenticat
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/03eef8eb-c63e-4822-9d21-e4ca8e906d35" />
 <img width="2560" height="2162" alt="screen" src="https://github.com/user-attachments/assets/1503c98e-9852-440d-b237-468012436f81" />
 <img width="2560" height="1768" alt="screen" src="https://github.com/user-attachments/assets/c5c14922-e6d7-47ff-989b-bf97212540ae" />
+
+## Plugin 2.1: Fulfillment Operations
+
+| ID    | Use Case                      | User Story                                                                                                                              | Acceptance Criteria                                                                                                                                                                                                                                                                                       |
+| ----- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UC3.1 | Wave & Batch Picking          | As a Supervisor, I want to create optimized picking waves based on SLA priorities so that fulfillment is efficient and deadline-driven. | Given pending orders<br>When creates wave (SLA priority, carrier cutoff, zone grouping)<br>Then optimizes route planning, assigns to pickers, displays progress dashboard.<br>Edge: Dynamic re-assignment → based on picker availability.<br>Error: No optimal route → fallback to standard picking.      |
+| UC3.2 | Scan-to-Pick/Pack Enforcement | As a Picker, I want mandatory barcode scanning for all picking/packing steps so that accuracy is guaranteed.                            | Given assigned wave/order<br>When scans item/location before each action<br>Then validates match, prevents errors, enforces sequence (pick → pack → ship).<br>Edge: Exception handling → supervisor override with audit trail.<br>Error: Mismatch detected → block progress, require correction.          |
+| UC3.3 | Picking Route Optimization    | As a System, I want to calculate optimal picking paths to minimize travel time and maximize efficiency.                                 | Given wave assignment<br>When analyzes bin locations, quantities, picker patterns<br>Then generates optimized routes, displays on mobile UI, tracks completion metrics.<br>Edge: Real-time adjustments → based on concurrent picks.<br>Error: Route calculation fails → fallback to alphabetical sorting. |
+| UC3.4 | Packing Validation            | As a Packer, I want automated checks during packing to ensure order completeness and accuracy.                                          | Given picked items<br>When scans into packing station<br>Then validates quantities, weights, dimensions against order requirements, flags discrepancies.<br>Edge: Auto-weight calculation → integration with scales.<br>Error: Validation fails → quarantine order for review.                            |
+| UC3.5 | Fulfillment Status Tracking   | As a Supervisor, I want real-time visibility into fulfillment progress across all stages.                                               | Given active orders<br>When tracks through stages (assigned → picking → packing → shipping)<br>Then displays live dashboards, bottleneck alerts, performance metrics.<br>Edge: Predictive analytics → estimate completion times.<br>Error: Tracking lag → fallback to manual status updates.              |
 
 ## Plugin 3: Logistics Management
 
@@ -211,6 +230,26 @@ A versatile foundation providing: a landing page for user discovery; authenticat
 
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/5fafd9c5-4ca1-4e1e-8475-4c9e6744111b" />
 
+## Plugin 4.1: Compliance Tracking
+
+| ID    | Use Case                      | User Story                                                                                                                         | Acceptance Criteria                                                                                                                                                                                                                                                                                    |
+| ----- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| UC5.1 | FEFO (First Expiry First Out) | As a System, I want to enforce FEFO rules for picking so that products are shipped before expiry.                                  | Given picking process<br>When selects items for order<br>Then prioritizes earliest expiry dates, blocks selection of expired items, logs FEFO compliance.<br>Edge: Manual override → supervisor approval with audit trail.<br>Error: Expired item selected → block and alert "FEFO violation."         |
+| UC5.2 | Batch & Lot Tracking          | As a Warehouse Manager, I want to track batches and lots for recall management so that affected products can be identified.        | Given product receipt<br>When assigns batch/lot numbers<br>Then tracks through picking/shipping, enables targeted recalls, maintains genealogy.<br>Edge: Auto-generation → based on supplier/date.<br>Error: Duplicate batch → validation error.                                                       |
+| UC5.3 | Expiry Management             | As a Supervisor, I want expiry alerts and automated quarantine so that expired products are handled appropriately.                 | Given inventory items<br>When monitors expiry dates<br>Then sends alerts (7/30/90 days), auto-quarantines expired items, prevents picking.<br>Edge: Custom thresholds → configurable per category.<br>Error: Expired item in active order → block fulfillment.                                         |
+| UC5.4 | Recall Workflows              | As an Admin, I want automated recall processes for affected batches so that compliance is maintained.                              | Given recall trigger (batch/lot)<br>When identifies affected inventory<br>Then quarantines items, notifies affected parties, generates recall reports, tracks resolution.<br>Edge: Partial recalls → specific SKUs/batches.<br>Error: Recall execution fail → escalation to management.                |
+| UC5.5 | QC on Receiving               | As a QC Inspector, I want to inspect received items for damage, expiry, and quality so that only acceptable goods enter inventory. | Given received ASN<br>When inspector performs QC checks (damage assessment, expiry dates, quantity verification)<br>Then records findings, approves/rejects items, updates status.<br>Edge: Photo evidence → upload for dispute resolution.<br>Error: Critical damage → quarantine workflow triggered. |
+
+## Plugin 4.2: Merchant Portal
+
+| ID    | Use Case              | User Story                                                                                 | Acceptance Criteria                                                                                                                                                                                                                                            |
+| ----- | --------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UC6.1 | Order Visibility      | As a Merchant, I want real-time order tracking so that I can monitor fulfillment progress. | Given active orders<br>When accesses portal<br>Then displays order status, estimated delivery, tracking updates, fulfillment timeline.<br>Edge: Push notifications → order status changes.<br>Error: Portal access fail → email notifications as fallback.     |
+| UC6.2 | Inventory Reports     | As a Merchant, I want inventory visibility and reports so that I can manage stock levels.  | Given portal access<br>When views inventory<br>Then displays stock levels, low stock alerts, sales velocity, forecast recommendations.<br>Edge: Export reports → CSV/PDF options.<br>Error: Data sync delay → shows last known with warning.                   |
+| UC6.3 | Performance Analytics | As a Merchant, I want performance metrics and KPIs so that I can optimize operations.      | Given portal dashboard<br>When displays analytics<br>Then shows fulfillment rates, on-time delivery, customer satisfaction, cost per order.<br>Edge: Custom date ranges → flexible reporting.<br>Error: Metric calculation fail → displays "Data unavailable." |
+| UC6.4 | Billing Dashboard     | As a Merchant, I want billing transparency and history so that I can track costs.          | Given portal access<br>When views billing<br>Then displays current charges, payment history, outstanding invoices, cost breakdowns.<br>Edge: Auto-payment setup → recurring billing.<br>Error: Billing sync fail → shows cached data with refresh option.      |
+| UC6.5 | Real-Time Tracking    | As a Merchant, I want live shipment tracking so that customers receive accurate updates.   | Given shipped orders<br>When customer tracks<br>Then displays real-time location, estimated delivery, delivery updates via portal API.<br>Edge: Custom tracking pages → white-label options.<br>Error: Carrier API fail → fallback to manual status updates.   |
+
 ## Plugin 5: Marketplace Management
 
 | ID     | Use Case                           | User Story                                                                                                                                                   | Acceptance Criteria                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -265,8 +304,6 @@ A versatile foundation providing: a landing page for user discovery; authenticat
 
 ## Plugin 7: Returns & Refunds Management
 
-Focus: RMA (Return Merchandise Authorization), return authorization, restock to inventory, refund processing. Integrates with order lifecycle (e.g., reverse Shipped → Returned) and payments (Moyasar refunds).
-
 | ID    | Use Case             | User Story                                                                                           | Acceptance Criteria                                                                                                                                                                                                                                                      |
 | ----- | -------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | UC8.1 | RMA Creation         | As a Seller, I want to create an RMA for a returned order so that returns are tracked and processed. | Given returned order<br>When seller submits RMA (reason dropdown, photos upload)<br>Then generates RMA ID, updates order status to Returned, notifies warehouse.<br>Edge: Partial return → adjust quantities.<br>Error: Invalid order → "Order not eligible for return." |
@@ -275,9 +312,7 @@ Focus: RMA (Return Merchandise Authorization), return authorization, restock to 
 | UC8.4 | Refund Processing    | As a Seller, I want to issue refunds via Moyasar so that customers are reimbursed.                   | Given authorized RMA<br>When refund initiated (amount calc from order)<br>Then processes via gateway, updates balance.<br>Edge: Partial refund → split.<br>Error: Gateway fail → retry queue.                                                                            |
 | UC8.5 | Returns List & View  | As a Seller/Staff, I want to list/view RMAs with search/filter/export so that returns are managed.   | Given returns screen<br>When filtering (status/date)<br>Then table shows ID, order link, status, refund amount.<br>Edge: Export CSV with details.<br>Error: Load fail → retry.                                                                                           |
 
-### Plugin 8: Audit & Logging
-
-Focus: API logging, transaction logs, retention policies (90 days export to SIEM).
+## Plugin 8: Audit & Logging
 
 | ID     | Use Case              | User Story                                                                                   | Acceptance Criteria                                                                                                                                                        |
 | ------ | --------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -285,7 +320,7 @@ Focus: API logging, transaction logs, retention policies (90 days export to SIEM
 | UC10.2 | API Logging & Metrics | As an Admin, I want API logs/metrics (e.g., sync errors) so that integrations are monitored. | Given logs screen<br>When filters (API endpoint/date)<br>Then table with calls/status, export CSV.<br>Edge: Alerts on high errors.<br>Error: No logs → "Quiet period."     |
 | UC10.3 | Audit Report Export   | As an Admin, I want to export audit logs for compliance so that reviews are easy.            | Given export button<br>When selects range<br>Then generates SIEM-compatible file.<br>Edge: Filter by user/event type.<br>Error: Large export → chunked download.           |
 
-## Wirframes
+## Wireframes
 
 <img width="2560" height="2008" alt="screen" src="https://github.com/user-attachments/assets/bbdbf723-277f-4f1c-b2a3-e137fb632cd6" />
 <img width="2560" height="1600" alt="screen" src="https://github.com/user-attachments/assets/176717c4-431a-4c0f-80ac-572ea78aa8af" />
@@ -486,40 +521,25 @@ The platform will be built across **5 major phases** using **2-week sprints** (1
 
 ---
 
-### **Sprint Overview Table**
+## Technical Approach
 
-| Sprint | Days   | Phase                        | Key Deliverables                                                                                   |
-| ------ | ------ | ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| 1      | 1-10   | Foundation                   | Infrastructure, landing page, authentication (signup/OTP/login), profile management                |
-| 2      | 11-20  | Foundation                   | RBAC (roles/permissions/tenant isolation), admin dashboard, analytics, payment gateway             |
-| 3      | 21-30  | Store & Product              | Store registration, product CRUD, bulk upload, inventory views, approval workflows                 |
-| 4      | 31-40  | Warehouse Core               | Staff CRUD, shelf assignment, QR mapping, picking/packing, warehouse orders                        |
-| 5      | 41-50  | Logistics                    | Pickup scheduling, auto-routing, tracking, tag management, label generation                        |
-| 6      | 51-60  | Billing                      | Multi-invoice generation, VAT handling, QuickBooks sync, billing cycles, ad hoc fees               |
-| 7      | 61-70  | Marketplace                  | Multi-channel listings, order aggregation, de-duplication, manual fallbacks                        |
-| 8      | 71-80  | Payouts & Advanced Warehouse | Payout cycles, multi-bank support, balance management, wave picking, mobile WMS                    |
-| 9      | 81-90  | Returns & Audits             | RMA workflows, refund processing, restocking, transaction/API logging, audit exports               |
-| 10     | 91-100 | SLAs & Integration           | SLA monitoring/compensation, system-wide testing, performance optimization, security audit, launch |
+Extend existing architecture with new domain modules:
 
----
-
-### **Key Milestones**
-
-- **Day 20**: Base system live (authentication, RBAC, admin tools, analytics)
-- **Day 40\*\*\*\***: Store & warehouse plugins operational (product approvals, inventory tracking, picking/packing)
-- **Day 60**: Logistics & billing integrated (pickups scheduled, invoices generated with VAT)
-- **Day 80**: Marketplace & payouts functional (listings sync, multi-bank payouts, wave picking)
-- **Day 100**: Full platform launch (returns, audits, SLA enforcement, all plugins integrated)
+- **warehouse_core**: ASN, bin logic, capacity tracking, cycle counting
+- **fulfillment_ops**: picking, packing, transfers, wave management
+- **compliance_track**: FEFO, batch, recall workflows, expiry management
+- **merchant_portal**: visibility, reports, analytics dashboards
+- **billing_engine_v2**: fees, reconciliation, multi-warehouse invoicing
 
 ---
 
 ### **Risk Mitigation**
 
-- **API Dependency Risks**: All external integrations (Torod, Moyasar, marketplaces) have manual fallbacks and retry queues
-- **Scope Creep**: Strict sprint boundaries; "nice-to-have" features deferred to post-launch iterations
-- **Performance Bottlenecks**: Load testing starts Sprint 6; caching/CDN optimizations in Sprint 10
-- **Security Gaps**: Tenant isolation testing in Sprint 2; full security audit in Sprint 10
-- **Team Velocity**: Buffer days built into Sprints 9-10 for catch-up; daily standups to address blockers
+- **API Integration Risks**: Comprehensive fallback processes for all external APIs (Shopify, carriers, payment gateways)
+- **Scope Management**: Phased delivery with clear acceptance criteria for each module
+- **Performance Requirements**: Continuous monitoring and optimization throughout development
+- **Compliance Gaps**: Built-in validation and audit trails from day one
+- **Team Coordination**: Weekly reviews and iterative testing to ensure module integration
 
 ## Price
 
