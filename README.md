@@ -537,7 +537,9 @@ This section includes all supplementary documents referenced throughout the prop
 
 - Enhanced Comparison Sheet
 This attachment presents an improved single-page landscape comparison between Fast Access’ IT proposal and the Omniful benchmark system. The layout has been optimized for clarity, with readable columns, wrapped text, and adjusted widths to make the differences and alignment between both systems easy to review.
---
+
+
+---
 
 ### **Risk Mitigation**
 
