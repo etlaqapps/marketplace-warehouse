@@ -535,7 +535,7 @@ Extend existing architecture with new domain modules:
 ## Attachments / Appendices
 This section includes all supplementary documents referenced throughout the proposal. These attachments provide additional detail, clarification, or supporting materials that enhance understanding of the project scope, methodology, and deliverables. Each attachment is clearly labeled and organized for easy navigation.
 
-#### Enhanced Comparison Sheet
+- Enhanced Comparison Sheet
 This attachment presents an improved single-page landscape comparison between Fast Access’ IT proposal and the Omniful benchmark system. The layout has been optimized for clarity, with readable columns, wrapped text, and adjusted widths to make the differences and alignment between both systems easy to review.
 --
 
